@@ -1,12 +1,11 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <memory.h>
 
 #define MAIN_FILE "/home/rv/Документы/FileSystem/filesystem.txt"
-#define SECTOR_SIZE 4
-#define SECTOR_COUNT 16
 #define EMPTY_SYMBOL 'a'
 
+const int SECTOR_SIZE = 2048;
+const int SECTOR_COUNT = 64;
 
 void filling_main_file(){
     FILE* file = fopen(MAIN_FILE, "w");
@@ -14,7 +13,6 @@ void filling_main_file(){
     for(int i = 0; i < SECTOR_COUNT; i++){
         for(int j = 0; j < SECTOR_SIZE; j++){
             fprintf(file, "%c", EMPTY_SYMBOL);
-
         }
     }
 
@@ -38,43 +36,52 @@ void get_sector(char* buf, int sector_num){
 
 /**
  * Запись данных в сектор
- * @param str - строка для записи с заверщающим нулем
+ * @param str - строка для записи длиной SECTOR_SIZE с заверщающим нулем
  * @param sector_num - номер сектора с нуля
  */
 void set_sector(const char* str, int sector_num){
+    if(strlen(str) != SECTOR_SIZE - 1){
+        perror("Error argument len in set_sector");
+    }
+
     FILE* file;
 
-    int  m = (SECTOR_COUNT - sector_num) * SECTOR_SIZE;
-    char buf[m];
-    strncpy(buf, str, SECTOR_SIZE);
-    printf("buf: %s\n", buf);
+    char full[SECTOR_SIZE * SECTOR_COUNT];
+    char buf[SECTOR_SIZE];
 
-    file = fopen(MAIN_FILE, "rb");
+    file = fopen(MAIN_FILE, "r");
 
-    char next_sectors[m - SECTOR_SIZE];
-    fseek(file, (sector_num + 1) * SECTOR_SIZE, SEEK_SET);
-    fgets(next_sectors, m - SECTOR_SIZE, file);
-    printf("next_sectors: %s\n", next_sectors);
+    for(int i = 0; i < SECTOR_COUNT; i++){
+        get_sector(buf, i);
+        for(int j = 0; j < SECTOR_SIZE; j++){
+            full[i * SECTOR_SIZE + j] = buf[j];
+        }
+    }
 
     fclose(file);
 
-    strstr(buf, next_sectors);
-    printf("buf: %s\n", buf);
+    file = fopen(MAIN_FILE, "w");
 
-    file = fopen(MAIN_FILE, "a");
+    for(int i = 0; i < SECTOR_COUNT; i++){
+        if(i == sector_num){
+            for(int j = 0; j < SECTOR_SIZE; j++){
+                fprintf(file, "%c", str[j]);
+            }
+        } else {
+            for(int j = 0; j < SECTOR_SIZE; j++){
+                fprintf(file, "%c", full[i * SECTOR_SIZE + j]);
+            }
 
-    fseek(file, sector_num * SECTOR_SIZE, SEEK_SET);
-    fputs(buf, file);
+        }
+    }
 
     fclose(file);
 }
 
+
 int main(int argc, char *argv[]) {
     filling_main_file();
 
-    char buf[SECTOR_SIZE] = "bbb\0";
-    set_sector(buf, 1);
-    printf("%s", buf);
 
     return 0;
 }
