@@ -9,9 +9,9 @@
 #include <stdlib.h>
 #include "sectors.h"
 
-const int MAX_NUM = 99;
+const int MAX_NUM_SIZE = 2;
 const int MAX_NAME = 12;
-const int MAX_ARRAY = 48;
+const int MAX_ARRAY = 24;
 const int INODE_SIZE = 64;
 const int INODE_COUNT = SECTOR_SIZE / INODE_SIZE;
 
@@ -19,7 +19,7 @@ struct inode{
     int num;
     char name[MAX_NAME]; // с завершающим нулем
     char type;
-    char array[MAX_ARRAY]; // у директорий это номера inode, 99 - пусто
+    int array[MAX_ARRAY]; // у директорий это номера inode, 99 - пусто
 };
 
 
@@ -84,11 +84,47 @@ void read_inode_table(){
         table[i].type = buf[k];
         k += 1;
 
-        for(int j = 0;  j < MAX_ARRAY; j+=2){
-            table[i].array[j] = 10*(buf[k + 2*j] - '0') + (buf[k + 2*j + 1] - '0');
+        for(int j = 0;  j < MAX_ARRAY; j++){
+            int num1 = buf[k + 2*j] - '0';
+            int num2 = buf[k + 2*j + 1] - '0';
+            table[i].array[j] = 10*num1 + num2;
+        }
+    }
+}
+
+void write_inode_table(){
+    char buf[SECTOR_SIZE];
+
+    for(int i = 0; i < INODE_COUNT; i++){
+        int k = i * INODE_SIZE;
+
+        buf[k] = table[i].num/10 + '0';
+        buf[k + 1] = table[i].num%10 + '0';
+        k += 2;
+
+        for(int j = 0; j < MAX_NAME; j++){
+            buf[k + j] = table[i].name[j];
+        }
+        k += MAX_NAME;
+        buf[k - 1] = '|'; // чтобы не было \0 в MAIN_FILE
+
+        buf[k] = table[i].type;
+        k += 1;
+
+        for(int j = 0;  j < MAX_ARRAY; j++){
+            int num1 = table[i].array[j] / 10;
+            int num2 = table[i].array[j] % 10;
+            buf[k + 2 * j] = num1 + '0';
+            buf[k + 2 * j + 1] = num2 + '0';
+        }
+        k += MAX_ARRAY * 2;
+        buf[k] = '|';
+        if(i == INODE_COUNT - 1){
+            buf[k] = '\0';
         }
     }
 
+    set_sector(buf, 0);
 }
 
 void print_inode_table(){
@@ -97,11 +133,11 @@ void print_inode_table(){
         printf("%d |", in.num);
         printf("%s |", in.name);
         printf("%c |", in.type);
-        for(int j = 0; j < 48; j++){
+        for(int j = 0; j < MAX_ARRAY; j++){
             printf("%d ", in.array[j]);
         }
         printf("\n");
     }
 }
 
-#endif //FILESYSTEM_INODE_H
+#endif FILESYSTEM_INODE_H
