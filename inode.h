@@ -27,9 +27,15 @@ void filling_inode_table(){
     }
     inode_str[6] = ';';
 
-    for(int i = 7; i < INODE_SIZE - 1; i++){
-        inode_str[i] = '0';
+    int s = 7;
+    for(int i = 0; i < IBLOCK_ARRAY_SIZE; i++){
+        inode_str[s++] = '0';
+        inode_str[s++] = '0';
+        inode_str[s++] = '0';
+        inode_str[s++] = '0';
     }
+
+
     inode_str[INODE_SIZE - 1] = '|';
 
     char table_buf[BLOCK_SIZE];
@@ -47,7 +53,7 @@ void filling_inode_table(){
     }
 }
 
-struct inode* read_inode_table(){
+void read_inode_table(){
     char buf[BLOCK_SIZE];
     for(int table_block = 0; table_block < INODE_TABLE_BLOCK_COUNT; table_block++) {
         get_sector(buf, table_block + INODE_TABLE_START_BLOCK);
@@ -80,12 +86,52 @@ struct inode* read_inode_table(){
     }
 }
 
+void write_inode_table(){
+    char buf[BLOCK_SIZE];
+    for(int table_block = 0; table_block < INODE_TABLE_BLOCK_COUNT; table_block++) {
+        for (int i = 0; i < INODE_TABLE_IN_BLOCK; i++) {
+            int j = i * INODE_SIZE; //номер в буфере
+            int t = INODE_TABLE_IN_BLOCK * table_block + i; //номер в таблице
+
+            buf[j++] = inode_table[t].type;
+            buf[j++] = ';';
+
+
+            int num = inode_table[t].len_iblock_arr;
+            int num1 = num / 1000;
+            int num2 = num / 100 % 10;
+            int num3 = num / 10 % 10;
+            int num4 = num % 10;
+            buf[j++] = num1 + '0';
+            buf[j++] = num2 + '0';
+            buf[j++] = num3 + '0';
+            buf[j++] = num4 + '0';
+            buf[j++] = ';';
+
+
+            for (int s = 0; s < IBLOCK_ARRAY_SIZE; s++) {
+                int num = inode_table[t].iblock[s];
+                int num1 = num / 1000;
+                int num2 = num / 100 % 10;
+                int num3 = num / 10 % 10;
+                int num4 = num % 10;
+                buf[j++] = num1 + '0';
+                buf[j++] = num2 + '0';
+                buf[j++] = num3 + '0';
+                buf[j++] = num4 + '0';
+            }
+        }
+
+        set_sector(buf, table_block + INODE_TABLE_START_BLOCK);
+    }
+}
+
 
 void print_inode_table(){
     for(int i = 0; i < INODE_TABLE_SIZE; i++){
         printf("%c;%d;", inode_table[i].type, inode_table[i].len_iblock_arr);
         for(int j = 0; j < IBLOCK_ARRAY_SIZE; j++){
-            printf("%d", inode_table[i].iblock[j]);
+            printf("%d:", inode_table[i].iblock[j]);
         }
         printf("|\n");
     }
