@@ -8,18 +8,19 @@
 #include <stdio.h>
 #include <memory.h>
 
-#define MAIN_FILE "/home/rv/Документы/FileSystem/filesystem.txt"
-#define EMPTY_SYMBOL 'a'
+#include "constants.h"
 
-const int SECTOR_SIZE = 1024;
-const int SECTOR_COUNT = 64;
 
 void filling_main_file(){
     FILE* file = fopen(MAIN_FILE, "w");
 
-    for(int i = 0; i < SECTOR_COUNT; i++){
-        for(int j = 0; j < SECTOR_SIZE; j++){
-            fprintf(file, "%c", EMPTY_SYMBOL);
+    for(int i = 0; i < BLOCK_COUNT; i++){
+        for(int j = 0; j < BLOCK_SIZE; j++){
+            if(j == BLOCK_SIZE - 1){
+                fprintf(file,"\0");
+            } else {
+                fprintf(file, "%c", EMPTY_SYMBOL);
+            }
         }
     }
 
@@ -34,8 +35,8 @@ void filling_main_file(){
 void get_sector(char* buf, int sector_num){
     FILE* file = fopen(MAIN_FILE, "r");
 
-    fseek(file, sector_num * SECTOR_SIZE, SEEK_SET);
-    fgets(buf, SECTOR_SIZE, file);
+    fseek(file, sector_num * BLOCK_SIZE, SEEK_SET);
+    fgets(buf, BLOCK_SIZE, file);
 
     fclose(file);
 }
@@ -47,21 +48,21 @@ void get_sector(char* buf, int sector_num){
  * @param sector_num - номер сектора с нуля
  */
 void set_sector(const char* str, int sector_num){
-    if(strlen(str) != SECTOR_SIZE - 1){
+    if(strlen(str) != BLOCK_SIZE - 1){
         perror("Error argument len in set_sector");
     }
 
     FILE* file;
 
-    char full[SECTOR_SIZE * SECTOR_COUNT];
-    char buf[SECTOR_SIZE];
+    char full[BLOCK_SIZE * BLOCK_COUNT];
+    char buf[BLOCK_SIZE];
 
     file = fopen(MAIN_FILE, "r");
 
-    for(int i = 0; i < SECTOR_COUNT; i++){
+    for(int i = 0; i < BLOCK_COUNT; i++){
         get_sector(buf, i);
-        for(int j = 0; j < SECTOR_SIZE; j++){
-            full[i * SECTOR_SIZE + j] = buf[j];
+        for(int j = 0; j < BLOCK_SIZE; j++){
+            full[i * BLOCK_SIZE + j] = buf[j];
         }
     }
 
@@ -69,14 +70,14 @@ void set_sector(const char* str, int sector_num){
 
     file = fopen(MAIN_FILE, "w");
 
-    for(int i = 0; i < SECTOR_COUNT; i++){
+    for(int i = 0; i < BLOCK_COUNT; i++){
         if(i == sector_num){
-            for(int j = 0; j < SECTOR_SIZE; j++){
+            for(int j = 0; j < BLOCK_SIZE; j++){
                 fprintf(file, "%c", str[j]);
             }
         } else {
-            for(int j = 0; j < SECTOR_SIZE; j++){
-                fprintf(file, "%c", full[i * SECTOR_SIZE + j]);
+            for(int j = 0; j < BLOCK_SIZE; j++){
+                fprintf(file, "%c", full[i * BLOCK_SIZE + j]);
             }
 
         }
