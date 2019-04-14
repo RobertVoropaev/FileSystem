@@ -3,4 +3,4 @@ project(FileSystem C)
 
 set(CMAKE_C_STANDARD 99)
 
-add_executable(FileSystem main.c sectors.h inode.h constants.h inode.h blocks_bitmap.h)
+add_executable(FileSystem main.c sectors.h inode.h constants.h inode.h blocks_bitmap.h directory.h)
