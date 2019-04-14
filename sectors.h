@@ -50,6 +50,7 @@ void get_sector(char* buf, int sector_num){
 void set_sector(const char* str, int sector_num){
     if(strlen(str) != BLOCK_SIZE - 1){
         perror("Error argument len in set_sector");
+        printf("%d", strlen(str));
     }
 
     FILE* file;

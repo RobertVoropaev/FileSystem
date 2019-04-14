@@ -7,7 +7,7 @@
 
 #define MAIN_FILE "/home/rv/Документы/FileSystem/filesystem.txt"
 
-const int BLOCK_SIZE = 1024;
+const int BLOCK_SIZE = 2048;
 const int BLOCK_COUNT = 1024;
 const int FILE_SYSTEM_SIZE = BLOCK_SIZE * BLOCK_COUNT;
 
@@ -19,5 +19,7 @@ const int INODE_TABLE_SIZE = BLOCK_COUNT;
 const int INODE_TABLE_IN_BLOCK = BLOCK_SIZE / INODE_SIZE;
 const int INODE_TABLE_BLOCK_COUNT = INODE_TABLE_SIZE / INODE_TABLE_IN_BLOCK;
 const int INODE_TABLE_START_BLOCK = 1;
+
+const int BITMAP_BLOCK = 0;
 
 #endif //FILESYSTEM_CONSTANTS_H
