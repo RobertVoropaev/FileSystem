@@ -1,30 +1,30 @@
+#include <stdlib.h>
 #include "inode.h"
 #include "blocks_bitmap.h"
 #include "directory.h"
 
 
-
 int main(int argc, char *argv[]) {
-    //filling_main_file();
-    //filling_inode_table();
-    //filling_blocks_bitmap();
-    filling_new_directory(40);
+    struct directory_element directory[MAX_FILE_IN_DIRECTORY];
+    int file_count1 = 3;
+    directory[0].inodeID = 1;
+    directory[1].inodeID = 3;
+    directory[2].inodeID = 5;
 
-    struct directory_element directory[3];
-    directory[0].inodeID = 0;
-    directory[1].inodeID = 1;
-    directory[2].inodeID = 2;
+    char str1[10] = "aaaaaaaaa\0";
+    char str2[10] = "bbbbbbbbb\0";
+    char str3[10] = "ccccccccc\0";
+    strcpy(directory[0].name, str1);
+    strcpy(directory[1].name, str2);
+    strcpy(directory[2].name, str3);
+    write_directory(directory, file_count1, 0);
 
-    char name[10] = "ffffffff++";
+    int* file_count = malloc(sizeof(int));
+    read_directory(directory, file_count, 0);
 
-    strncpy(directory[0].name, name, 10);
-    strncpy(directory[1].name, name, 10);
-    strncpy(directory[2].name, name, 10);
+    printf("%d\n", *file_count);
+    print_directory(directory, *file_count);
 
-    read_directory(directory, 3, 40);
-    for(int i = 0; i < 3; i++){
-        printf("%d %s \n", directory->inodeID, directory->name);
-    }
 
     return 0;
 }

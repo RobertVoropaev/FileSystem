@@ -39,30 +39,27 @@ void read_directory(struct directory_element directory[MAX_FILE_IN_DIRECTORY], i
         return;
     }
 
-    int flag = 1;
     for(int i = 0; i < MAX_FILE_IN_DIRECTORY; i++){
-        for(int j = 0; j < DIRECTORY_ELEMENT_SIZE; j++){
-            int s = DIRECTORY_ELEMENT_SIZE * i  + j; // позиция в строке
+        int s = DIRECTORY_ELEMENT_SIZE * i; // позиция в строке
 
-            int num1 = buf[s++] - '0';
-            int num2 = buf[s++] - '0';
-            int num3 = buf[s++] - '0';
-            int num4 = buf[s++] - '0';
-            directory[i].inodeID = num1 * 1000 + num2 * 100 + num3 * 10 + num4;
-            s += 1;
+        int num1 = buf[s++] - '0';
+        int num2 = buf[s++] - '0';
+        int num3 = buf[s++] - '0';
+        int num4 = buf[s++] - '0';
+        directory[i].inodeID = num1 * 1000 + num2 * 100 + num3 * 10 + num4;
+        s += 1;
 
-            for(int t = 0; t < FILE_NAME_SIZE; t++){
-                directory[i].name[t] = buf[s++];
-            }
-            directory[i].name[FILE_NAME_SIZE - 1] = '\0'; //затирает последний символ имени
-
-            if(buf[s] == '|'){
-                flag = 0;
-            }
+        for(int t = 0; t < FILE_NAME_SIZE; t++){
+            directory[i].name[t] = buf[s++];
         }
-        if(!flag){
+        directory[i].name[FILE_NAME_SIZE - 1] = '\0'; //затирает последний символ имени
+
+        if(buf[s] == '|'){
             *file_count = i + 1;
+            return;
         }
+
+
     }
 }
 
@@ -93,13 +90,18 @@ void write_directory(struct directory_element directory[MAX_FILE_IN_DIRECTORY], 
         }
         buf[s - 1] = EMPTY_SYMBOL; //затирает последний \0
 
-        buf[s] = ';';
+        buf[s++] = ';';
     }
 
-    buf[s] = '|';
+    buf[s - 1] = '|';
     buf[BLOCK_SIZE - 1] = '\0';
     set_sector(buf, block);
 }
 
+void print_directory(struct directory_element directory[], int len){
+    for(int i = 0; i < len; i++){
+        printf("%d %d:%s \n", i, directory[i].inodeID, directory[i].name);
+    }
+}
 
 #endif //FILESYSTEM_DIRECTORY_H
