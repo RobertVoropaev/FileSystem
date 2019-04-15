@@ -5,7 +5,7 @@
 #ifndef FILESYSTEM_DIRECTORY_H
 #define FILESYSTEM_DIRECTORY_H
 
-#include "constants.h"
+#include "settings.h"
 #include "sectors.h"
 
 struct directory_element{
@@ -18,6 +18,11 @@ struct directory_element{
  *  0001:name00000000;0012:name200000000|
  */
 
+
+/**
+ * Первичная запись в блок пустой папки
+ * @param block номер блока
+ */
 void filling_new_directory(int block){
     char buf[BLOCK_SIZE];
     for(int i = 0; i < BLOCK_SIZE; i++){
@@ -30,6 +35,13 @@ void filling_new_directory(int block){
     set_sector(buf, block);
 }
 
+
+/**
+ * Чтение папки из блока
+ * @param directory массив directory_element длиной MAX_FILE_IN_DIRECTORY
+ * @param file_count ссылка int*, в которой будет размер массива
+ * @param block номер блока
+ */
 void read_directory(struct directory_element directory[MAX_FILE_IN_DIRECTORY], int* file_count, int block){
     char buf[BLOCK_SIZE];
     get_sector(buf, block);
@@ -63,6 +75,12 @@ void read_directory(struct directory_element directory[MAX_FILE_IN_DIRECTORY], i
     }
 }
 
+/**
+ * Запись папки в блок
+ * @param directory directory массив directory_element длиной file_count
+ * @param file_count размер массива
+ * @param block номер блока
+ */
 void write_directory(struct directory_element directory[MAX_FILE_IN_DIRECTORY], int file_count, int block){
     char buf[BLOCK_SIZE];
     for(int i = 0; i < BLOCK_SIZE; i++){

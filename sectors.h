@@ -8,8 +8,11 @@
 #include <stdio.h>
 #include <memory.h>
 
-#include "constants.h"
+#include "settings.h"
 
+/**
+ * Первичное заполнение файла
+ */
 
 void filling_main_file(){
     FILE* file = fopen(MAIN_FILE, "w");

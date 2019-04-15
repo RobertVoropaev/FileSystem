@@ -5,12 +5,15 @@
 #ifndef FILESYSTEM_SECTORS_BITMAP_H
 #define FILESYSTEM_SECTORS_BITMAP_H
 
-#include "constants.h"
+#include "settings.h"
 #include "inode.h"
 #include "sectors.h"
 
-int block_bitmap[BLOCK_COUNT];
+int block_bitmap[BITMAP_SIZE];
 
+/*
+ * Первичное заполнение bitmap блока BITMAP_BLOCK
+ */
 void filling_blocks_bitmap(){
     char buf[BLOCK_SIZE];
 
@@ -18,7 +21,7 @@ void filling_blocks_bitmap(){
         buf[i] = '|';
     }
 
-    for(int i = 0; i < BLOCK_COUNT; i++){
+    for(int i = 0; i < BITMAP_SIZE; i++){
         buf[i] = '0';
     }
 
@@ -31,11 +34,14 @@ void filling_blocks_bitmap(){
     set_sector(buf, BITMAP_BLOCK);
 }
 
+/*
+ * Чтение bitmap блока
+ */
 void read_blocks_bitmap(){
     char buf[BLOCK_SIZE];
     get_sector(buf, BITMAP_BLOCK);
 
-    for(int i = 0; i < BLOCK_COUNT; i++){
+    for(int i = 0; i < BITMAP_SIZE; i++){
         char c = buf[i];
         if(c == '1'){
             block_bitmap[i] = 1;
@@ -47,6 +53,9 @@ void read_blocks_bitmap(){
     }
 }
 
+/*
+ * Запись bitmap в блок
+ */
 void write_blocks_bitmap(){
     char buf[BLOCK_SIZE];
 
@@ -54,7 +63,7 @@ void write_blocks_bitmap(){
         buf[i] = '|';
     }
 
-    for(int i = 0; i < BLOCK_COUNT; i++){
+    for(int i = 0; i < BITMAP_SIZE; i++){
         buf[i] = block_bitmap[i] + '0';
     }
 

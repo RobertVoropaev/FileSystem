@@ -5,7 +5,7 @@
 #ifndef FILESYSTEM_INODE_H
 #define FILESYSTEM_INODE_H
 
-#include "constants.h"
+#include "settings.h"
 #include "sectors.h"
 
 struct inode {
@@ -16,6 +16,9 @@ struct inode {
 
 struct inode inode_table[INODE_TABLE_SIZE];
 
+/**
+ *  Первичное заполнение блоков inode таблицы
+ */
 void filling_inode_table(){
     char inode_str[INODE_SIZE];
 
@@ -53,6 +56,10 @@ void filling_inode_table(){
     }
 }
 
+
+/**
+ * Чтение inode таблицы
+ */
 void read_inode_table(){
     char buf[BLOCK_SIZE];
     for(int table_block = 0; table_block < INODE_TABLE_BLOCK_COUNT; table_block++) {
@@ -86,6 +93,10 @@ void read_inode_table(){
     }
 }
 
+
+/**
+ * Запись inode таблицы в блоки
+ */
 void write_inode_table(){
     char buf[BLOCK_SIZE];
     for(int table_block = 0; table_block < INODE_TABLE_BLOCK_COUNT; table_block++) {
