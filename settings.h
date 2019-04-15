@@ -5,6 +5,7 @@
 #ifndef FILESYSTEM_CONSTANTS_H
 #define FILESYSTEM_CONSTANTS_H
 
+//Главный файс системы
 #define MAIN_FILE "/home/rv/Документы/FileSystem/filesystem.txt"
 
 //Настроки блоков
@@ -29,5 +30,10 @@ const int BITMAP_SIZE = BLOCK_COUNT; //Размер BITMAP
 const int DIRECTORY_ELEMENT_SIZE = 16; //Размер записи в файле папки
 const int FILE_NAME_SIZE = DIRECTORY_ELEMENT_SIZE - 4 - 2; //Размер имени файла
 const int MAX_FILE_IN_DIRECTORY = BLOCK_SIZE / DIRECTORY_ELEMENT_SIZE; // Максимальное количество файлов в папке
+
+//Настрока команд
+const int COMMAND_SIZE = 16;
+#define INIT_COMMAND "init"
+#define EXIT_COMMAND "exit"
 
 #endif //FILESYSTEM_CONSTANTS_H
