@@ -40,8 +40,6 @@ void load_file_system_structure(){
     read_inode_table();
 }
 
-
-
 /**
  * @return первый свободный блок данных,  -1 - если свободных нет
  */
@@ -91,7 +89,7 @@ int find_inode_in_directory(char name[FILE_NAME_SIZE], int dir_inode){
 
 
 /**
- * Записывает файл/папку в директорию
+ * Добавляет файл/папку в директорию
  * @param dir_inode inode папки
  * @param name имя файла с \0
  * @param type тип файла/папки
@@ -151,6 +149,12 @@ void create_file_in_directory(int dir_inode, char name[FILE_NAME_SIZE], char typ
     write_directory(directory, *file_count + 1, dir_block);
 }
 
+
+/**
+ * Удаляет файл/папку из директории
+ * @param dir_inode папки
+ * @param name имя файла \0
+ */
 void delete_file_in_directory(int dir_inode, char name[FILE_NAME_SIZE]){
     if(inode_table[dir_inode].type != 'd'){
         fprintf(stderr, "It's not a directory\n");
@@ -166,8 +170,18 @@ void delete_file_in_directory(int dir_inode, char name[FILE_NAME_SIZE]){
         fprintf(stderr, "This file was not found in the directory\n");
         return;
     }
-
     int file_block = inode_table[file_inode].iblock[0];
+
+    if(inode_table[file_inode].type == 'd'){
+        struct directory_element directory[MAX_FILE_IN_DIRECTORY];
+        int* file_count = malloc(sizeof(int));
+        read_directory(directory, file_count, file_block);
+        if(*file_count != 0){
+            fprintf(stderr, "This directory is not empty\n");
+            return;
+        }
+    }
+
     int dir_block = inode_table[dir_inode].iblock[0];
 
     struct directory_element directory[MAX_FILE_IN_DIRECTORY];
@@ -177,12 +191,13 @@ void delete_file_in_directory(int dir_inode, char name[FILE_NAME_SIZE]){
     delete_inode_in_directory(directory, *file_count, file_inode);
     inode_table[file_inode].type = 'e';
     inode_table[file_inode].len_iblock_arr = 0;
-    bitmap[dir_block] = 0;
+    bitmap[file_block] = 0;
 
     write_bitmap();
     write_inode_table();
     write_directory(directory, *file_count - 1, dir_block);
 }
+
 
 
 #endif //FILESYSTEM_COMMAND_H

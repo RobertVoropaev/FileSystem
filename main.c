@@ -1,5 +1,5 @@
 #include <stdlib.h>
-#include "command.h"
+#include "command_base.h"
 #include "run.h";
 
 int main(int argc, char *argv[]) {
@@ -10,6 +10,7 @@ int main(int argc, char *argv[]) {
     create_file_in_directory(ROOT_INODE_ID, "file1\0", 'f');
     create_file_in_directory(ROOT_INODE_ID, "dir0\0", 'd');
     delete_file_in_directory(ROOT_INODE_ID, "file1\0");
+    delete_file_in_directory(ROOT_INODE_ID, "dir0\0");
 
     struct directory_element directory[MAX_FILE_IN_DIRECTORY];
     int* file_count = malloc(sizeof(int));
