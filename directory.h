@@ -173,4 +173,8 @@ void delete_inode_in_directory(struct directory_element* directory, int file_cou
     }
 }
 
+int get_block(int inodeID){
+    return inode_table[inodeID].iblock[0];
+}
+
 #endif //FILESYSTEM_DIRECTORY_H

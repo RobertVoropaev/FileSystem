@@ -5,6 +5,7 @@
 #ifndef FILESYSTEM_COMMAND_H
 #define FILESYSTEM_COMMAND_H
 
+#include <stdlib.h>
 #include "sectors.h"
 #include "settings.h"
 #include "inode.h"
@@ -68,7 +69,7 @@ int get_free_inode(){
  * @param dir_inode inode папки
  * @return inodeID - если файл в папке есть, -1 - если нет
  */
-int find_inode_in_directory(char name[FILE_NAME_SIZE], int dir_inode){
+int find_inode_in_directory(const char name[FILE_NAME_SIZE], int dir_inode){
     if(inode_table[dir_inode].type != 'd'){
         fprintf(stderr, "It's not a directory\n");
         return -1;
@@ -94,7 +95,9 @@ int find_inode_in_directory(char name[FILE_NAME_SIZE], int dir_inode){
  * @param name имя файла с \0
  * @param type тип файла/папки
  */
-void create_file_in_directory(int dir_inode, char name[FILE_NAME_SIZE], char type){
+void create_file_in_directory(int dir_inode,
+                              const char name[FILE_NAME_SIZE],
+                              char type){
     if(inode_table[dir_inode].type != 'd'){
         fprintf(stderr, "It's not a directory\n");
         return;
@@ -155,7 +158,7 @@ void create_file_in_directory(int dir_inode, char name[FILE_NAME_SIZE], char typ
  * @param dir_inode папки
  * @param name имя файла \0
  */
-void delete_file_in_directory(int dir_inode, char name[FILE_NAME_SIZE]){
+void delete_file_in_directory(int dir_inode, const char name[FILE_NAME_SIZE]){
     if(inode_table[dir_inode].type != 'd'){
         fprintf(stderr, "It's not a directory\n");
         return;
@@ -196,6 +199,88 @@ void delete_file_in_directory(int dir_inode, char name[FILE_NAME_SIZE]){
     write_bitmap();
     write_inode_table();
     write_directory(directory, *file_count - 1, dir_block);
+}
+
+int find_inode_directory(const char path[MAX_PATH_LEN]){
+    if(path[0] != '\0'){
+        return ROOT_INODE_ID;
+    }
+    if(path[0] != '/'){
+        fprintf(stderr, "Incorrect path\n");
+        return -1;
+    }
+
+    int i_path = 1;
+    int i_name = 0;
+    char name[FILE_NAME_SIZE];
+    int current_inodeID = ROOT_INODE_ID;
+    while(1){
+        char c = path[i_path++];
+        if(c == '/'){
+            current_inodeID = find_inode_in_directory(name, current_inodeID);
+            if(current_inodeID == -1){
+                fprintf(stderr, "This file was not found in the directory\n");
+                return -1;
+            }
+            i_name = 0;
+        }
+        else if(c == '\0'){
+            current_inodeID = find_inode_in_directory(name, current_inodeID);
+            if(current_inodeID == -1){
+                fprintf(stderr, "This file was not found in the directory\n");
+                return -1;
+            }
+            return current_inodeID;
+        }
+        else {
+            name[i_name++] = c;
+        }
+    }
+}
+
+/**
+ * Получение каталоговой и файловой части пути
+ * ex. /dir1/dir2/file - > /dir1/dir2 and file
+ * @param path полный путь с \0
+ * @param dir каталоговая часть
+ */
+void get_dir_and_name_in_path(const char path[MAX_PATH_LEN],
+                              char dir[MAX_PATH_LEN],
+                              char name[FILE_NAME_SIZE]){
+    if(path[0] != '/'){
+        fprintf(stderr, "Incorrect path\n");
+        return;
+    }
+    dir[0] = '\0';
+
+    int i_path = 1;
+    int i_dir = 0;
+    int i_name = 0;
+    int i_cur = 0;
+    char cur_name[FILE_NAME_SIZE];
+    while(1){
+        char c = path[i_path++];
+        if(c == '/'){
+            cur_name[i_cur++] = c;
+            for(int i = 0; i < i_cur; i++){
+                dir[i + i_dir] = cur_name[i];
+            }
+            i_dir += i_cur;
+            i_cur = 0;
+        }
+        else if(c == '\0'){
+            for(int i = 0; i < i_cur; i++){
+                name[i] = cur_name[i];
+                i_name += i_cur;
+            }
+            name[i_cur] = '\0';
+            dir[i_dir - 1] = '\0';
+            break;
+        }
+        else {
+            cur_name[i_cur++] = c;
+        }
+    }
 }
 
 

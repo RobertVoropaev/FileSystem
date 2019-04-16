@@ -3,21 +3,13 @@
 #include "run.h";
 
 int main(int argc, char *argv[]) {
-    init_file_system();
-    load_file_system_structure();
+    const char path[] = "/dir";
+    char dir[MAX_PATH_LEN];
+    char name[FILE_NAME_SIZE];
+    get_dir_and_name_in_path(path, dir, name);
+    printf("%d %s \n", strlen(dir), name);
 
-    create_file_in_directory(ROOT_INODE_ID, "file0\0", 'f');
-    create_file_in_directory(ROOT_INODE_ID, "file1\0", 'f');
-    create_file_in_directory(ROOT_INODE_ID, "dir0\0", 'd');
-    delete_file_in_directory(ROOT_INODE_ID, "file1\0");
-    delete_file_in_directory(ROOT_INODE_ID, "dir0\0");
-
-    struct directory_element directory[MAX_FILE_IN_DIRECTORY];
-    int* file_count = malloc(sizeof(int));
-    read_directory(directory, file_count, ROOT_DIRECTORY_BLOCK);
-
-
-    print_directory(directory, *file_count);
-
+    int inodeDir = find_inode_directory(dir);
+    printf("%d", inodeDir);
     return 0;
 }

@@ -35,9 +35,16 @@ const int ROOT_DIRECTORY_BLOCK = INODE_TABLE_START_BLOCK + INODE_TABLE_BLOCK_COU
 const int ROOT_INODE_ID = 0;
 
 //Настрока команд
-const int COMMAND_SIZE = 16;
-#define INIT_COMMAND "init"
-#define EXIT_COMMAND "exit"
+#define INIT "init"
+#define EXIT "exit"
+#define MKDIR "mkdir"
+#define TOUCH "touch"
+#define RMDIR "rmdir"
+#define RM "rm"
+#define LS "ls"
+#define HELP "help"
 const int MAX_PATH_LEN = 64;
+const int COMMAND_SIZE = 6;
+const int FULL_COMMAND_SIZE = MAX_PATH_LEN + COMMAND_SIZE ;
 
 #endif //FILESYSTEM_CONSTANTS_H
