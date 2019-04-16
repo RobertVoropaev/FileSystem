@@ -9,7 +9,7 @@
 #include "inode.h"
 #include "sectors.h"
 
-int block_bitmap[BITMAP_SIZE];
+int bitmap[BITMAP_SIZE];
 
 /*
  * Первичное заполнение bitmap блока BITMAP_BLOCK
@@ -38,16 +38,16 @@ void filling_blocks_bitmap(){
 /*
  * Чтение bitmap блока
  */
-void read_blocks_bitmap(){
+void read_bitmap(){
     char buf[BLOCK_SIZE];
     get_sector(buf, BITMAP_BLOCK);
 
     for(int i = 0; i < BITMAP_SIZE; i++){
         char c = buf[i];
         if(c == '1'){
-            block_bitmap[i] = 1;
+            bitmap[i] = 1;
         } else if ( c == '0'){
-            block_bitmap[i] = 0;
+            bitmap[i] = 0;
         } else {
             perror("Read bitmap error: unknown symbol");
         }
@@ -57,7 +57,7 @@ void read_blocks_bitmap(){
 /*
  * Запись bitmap в блок
  */
-void write_blocks_bitmap(){
+void write_bitmap(){
     char buf[BLOCK_SIZE];
 
     for(int i = 0; i < BLOCK_SIZE; i++){
@@ -65,7 +65,7 @@ void write_blocks_bitmap(){
     }
 
     for(int i = 0; i < BITMAP_SIZE; i++){
-        buf[i] = block_bitmap[i] + '0';
+        buf[i] = bitmap[i] + '0';
     }
 
     buf[BLOCK_SIZE - 1] = '\0';

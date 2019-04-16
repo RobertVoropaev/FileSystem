@@ -3,20 +3,20 @@
 #include "run.h";
 
 int main(int argc, char *argv[]) {
-//    init_file_system();
+    init_file_system();
     load_file_system_structure();
-//
-//    create("/new\0", 'f');
-//    create("/new1\0", 'f');
-//    create("/dir\0", 'f');
-//
-    create("/dir/file", 'd');
 
-    struct directory_element dir[MAX_FILE_IN_DIRECTORY];
+    create_file_in_directory(ROOT_INODE_ID, "file0\0", 'f');
+    create_file_in_directory(ROOT_INODE_ID, "file1\0", 'f');
+    create_file_in_directory(ROOT_INODE_ID, "dir0\0", 'd');
+    delete_file_in_directory(ROOT_INODE_ID, "file1\0");
+
+    struct directory_element directory[MAX_FILE_IN_DIRECTORY];
     int* file_count = malloc(sizeof(int));
-    read_directory(dir, file_count, ROOT_DIRECTORY_BLOCK);
+    read_directory(directory, file_count, ROOT_DIRECTORY_BLOCK);
 
-    print_directory(dir, *file_count);
+
+    print_directory(directory, *file_count);
 
     return 0;
 }

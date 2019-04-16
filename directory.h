@@ -132,11 +132,13 @@ void write_directory(struct directory_element directory[MAX_FILE_IN_DIRECTORY], 
 
         buf[s++] = ':';
 
-        for(int t = 0; t < FILE_NAME_SIZE; t++){
-            buf[s++] = directory[i].name[t];
-        }
+        char name[FILE_NAME_SIZE];
+        strcpy(name, directory[i].name);
+        stored_name(name);
 
-        stored_name(directory[i].name);
+        for(int t = 0; t < FILE_NAME_SIZE; t++){
+            buf[s++] = name[t];
+        }
 
         buf[s++] = ';';
     }
@@ -146,9 +148,28 @@ void write_directory(struct directory_element directory[MAX_FILE_IN_DIRECTORY], 
     set_sector(buf, block);
 }
 
-void print_directory(struct directory_element directory[], int len){
+void print_directory(struct directory_element directory[MAX_FILE_IN_DIRECTORY], int len){
     for(int i = 0; i < len; i++){
-        printf("%d %d:%s \n", i, directory[i].inodeID, directory[i].name);
+        printf("%d -> ", i);
+        printf("inodeID:%d name:%s \n", directory[i].inodeID, directory[i].name);
+    }
+}
+
+void delete_inode_in_directory(struct directory_element* directory, int file_count, int inodeID){
+    int index = -1;
+    for(int i = 0; i < file_count; i++){
+        if(directory[i].inodeID == inodeID){
+            index = i;
+            break;
+        }
+    }
+    if(index == -1){
+        fprintf(stderr, "This file was not found in the directory\n");
+        return;
+    }
+    for(int i = index + 1; i < file_count; i++){
+        directory[i - 1].inodeID = directory[i].inodeID;
+        strcpy(directory[i - 1].name, directory[i].name);
     }
 }
 
