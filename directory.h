@@ -19,6 +19,34 @@ struct directory_element{
  */
 
 
+/*
+ *  "name+++++\0" -> "name\0"
+ */
+void valid_name(char* name){
+    for(int i = 0; i < FILE_NAME_SIZE; i++){
+        if(name[i] == EMPTY_SYMBOL){
+            name[i] = '\0';
+            break;
+        }
+    }
+}
+
+/*
+ *  "name\0" -> "name+++++\0"
+ */
+void stored_name(char* name){
+    int s = 0;
+    for(int i = 0; i < FILE_NAME_SIZE; i++){
+        if(name[i] == '\0'){
+            s = i;
+            break;
+        }
+    }
+    for(int i = s; i < FILE_NAME_SIZE; i++){
+        name[i] = EMPTY_SYMBOL;
+    }
+}
+
 /**
  * Первичная запись в блок пустой папки
  * @param block номер блока
@@ -64,7 +92,8 @@ void read_directory(struct directory_element directory[MAX_FILE_IN_DIRECTORY], i
         for(int t = 0; t < FILE_NAME_SIZE; t++){
             directory[i].name[t] = buf[s++];
         }
-        directory[i].name[FILE_NAME_SIZE - 1] = '\0'; //затирает последний символ имени
+
+        valid_name(directory[i].name);
 
         if(buf[s] == '|'){
             *file_count = i + 1;
@@ -106,7 +135,8 @@ void write_directory(struct directory_element directory[MAX_FILE_IN_DIRECTORY], 
         for(int t = 0; t < FILE_NAME_SIZE; t++){
             buf[s++] = directory[i].name[t];
         }
-        buf[s - 1] = EMPTY_SYMBOL; //затирает последний \0
+
+        stored_name(directory[i].name);
 
         buf[s++] = ';';
     }

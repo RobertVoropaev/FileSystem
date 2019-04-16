@@ -7,6 +7,7 @@
 
 //Главный файс системы
 #define MAIN_FILE "/home/rv/Документы/FileSystem/filesystem.txt"
+int FILE_SYSTEM_IS_CREATED = 0;
 
 //Настроки блоков
 const int BLOCK_SIZE = 2048; //Размер одного блока в байтах
@@ -30,10 +31,13 @@ const int BITMAP_SIZE = BLOCK_COUNT; //Размер BITMAP
 const int DIRECTORY_ELEMENT_SIZE = 16; //Размер записи в файле папки
 const int FILE_NAME_SIZE = DIRECTORY_ELEMENT_SIZE - 4 - 2; //Размер имени файла
 const int MAX_FILE_IN_DIRECTORY = BLOCK_SIZE / DIRECTORY_ELEMENT_SIZE; // Максимальное количество файлов в папке
+const int ROOT_DIRECTORY_BLOCK = INODE_TABLE_START_BLOCK + INODE_TABLE_BLOCK_COUNT;
+const int ROOT_INODE_ID = 0;
 
 //Настрока команд
 const int COMMAND_SIZE = 16;
 #define INIT_COMMAND "init"
 #define EXIT_COMMAND "exit"
+const int MAX_PATH_LEN = 64;
 
 #endif //FILESYSTEM_CONSTANTS_H

@@ -28,6 +28,7 @@ void filling_blocks_bitmap(){
     for(int i = 0; i < INODE_TABLE_START_BLOCK + INODE_TABLE_BLOCK_COUNT; i++) {
         buf[i] = '1';
     }
+    buf[ROOT_DIRECTORY_BLOCK] = '1';
 
     buf[BLOCK_SIZE - 1] = '\0';
 

@@ -1,21 +1,22 @@
 #include <stdlib.h>
 #include "command.h"
+#include "run.h";
 
 int main(int argc, char *argv[]) {
-    char command[COMMAND_SIZE];
-    while(1){
-        scanf("%s", command);
-        if(!strcmp(command, INIT_COMMAND)){
-            init_file_system();
-            printf("File system is created!\n");
-        }
-        else if(!strcmp(command, EXIT_COMMAND)){
-            printf("exit\n");
-            break;
-        }
-        else{
-            printf("unknown command\n");
-        }
-    }
+//    init_file_system();
+    load_file_system_structure();
+//
+//    create("/new\0", 'f');
+//    create("/new1\0", 'f');
+//    create("/dir\0", 'f');
+//
+    create("/dir/file", 'd');
+
+    struct directory_element dir[MAX_FILE_IN_DIRECTORY];
+    int* file_count = malloc(sizeof(int));
+    read_directory(dir, file_count, ROOT_DIRECTORY_BLOCK);
+
+    print_directory(dir, *file_count);
+
     return 0;
 }
