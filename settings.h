@@ -5,7 +5,7 @@
 #ifndef FILESYSTEM_CONSTANTS_H
 #define FILESYSTEM_CONSTANTS_H
 
-//Главный файс системы
+//Главный файл системы
 #define MAIN_FILE "/home/rv/Документы/FileSystem/filesystem.txt"
 int FILE_SYSTEM_IS_CREATED = 0;
 
@@ -34,7 +34,7 @@ const int MAX_FILE_IN_DIRECTORY = BLOCK_SIZE / DIRECTORY_ELEMENT_SIZE; // Мак
 const int ROOT_DIRECTORY_BLOCK = INODE_TABLE_START_BLOCK + INODE_TABLE_BLOCK_COUNT;
 const int ROOT_INODE_ID = 0;
 
-//Настрока команд
+//Команды
 #define INIT "init"
 #define EXIT "exit"
 #define MKDIR "mkdir"
@@ -43,6 +43,8 @@ const int ROOT_INODE_ID = 0;
 #define RM "rm"
 #define LS "ls"
 #define HELP "help"
+
+//Настрока команд
 const int MAX_PATH_LEN = 64;
 const int COMMAND_SIZE = 6;
 const int FULL_COMMAND_SIZE = MAX_PATH_LEN + COMMAND_SIZE ;

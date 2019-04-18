@@ -2,16 +2,21 @@
 // Created by RobertVoropaev on 14.04.19.
 //
 
+
 #ifndef FILESYSTEM_SECTORS_BITMAP_H
 #define FILESYSTEM_SECTORS_BITMAP_H
 
-#include "settings.h"
-#include "inode.h"
+
+#include "../settings.h"
 #include "sectors.h"
 
+/**
+ * 1 - занят, 0 - свободен
+ */
 int bitmap[BITMAP_SIZE];
 
-/*
+
+/**
  * Первичное заполнение bitmap блока BITMAP_BLOCK
  */
 void filling_blocks_bitmap(){
@@ -35,7 +40,8 @@ void filling_blocks_bitmap(){
     set_sector(buf, BITMAP_BLOCK);
 }
 
-/*
+
+/**
  * Чтение bitmap блока
  */
 void read_bitmap(){
@@ -54,7 +60,8 @@ void read_bitmap(){
     }
 }
 
-/*
+
+/**
  * Запись bitmap в блок
  */
 void write_bitmap(){
@@ -70,6 +77,18 @@ void write_bitmap(){
 
     buf[BLOCK_SIZE - 1] = '\0';
     set_sector(buf, BITMAP_BLOCK);
+}
+
+
+/**
+ * @return первый свободный блок данных,  -1 - если свободных нет
+ */
+int get_free_block(){
+    for(int i = 0; i < BITMAP_SIZE; i++){
+        if(!bitmap[i]){
+            return i;
+        }
+    }
 }
 
 #endif //FILESYSTEM_SECTORS_BITMAP_H

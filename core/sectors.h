@@ -5,15 +5,15 @@
 #ifndef FILESYSTEM_SECTORS_H
 #define FILESYSTEM_SECTORS_H
 
+
 #include <stdio.h>
 #include <memory.h>
+#include "../settings.h"
 
-#include "settings.h"
 
 /**
- * Первичное заполнение файла
+ * Первичное заполнение всего файла
  */
-
 void filling_main_file(){
     FILE* file = fopen(MAIN_FILE, "w");
 
@@ -29,6 +29,7 @@ void filling_main_file(){
 
     fclose(file);
 }
+
 
 /**
  * Считывание данных из сектора

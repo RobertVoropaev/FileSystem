@@ -5,47 +5,18 @@
 #ifndef FILESYSTEM_DIRECTORY_H
 #define FILESYSTEM_DIRECTORY_H
 
-#include "settings.h"
+
+#include <stdlib.h>
+#include "../settings.h"
 #include "sectors.h"
+#include "../commands/str_proc.h"
+
 
 struct directory_element{
     int inodeID;
     char name[FILE_NAME_SIZE];
 };
 
-/*
- * Вид записи
- *  0001:name00000000;0012:name200000000|
- */
-
-
-/*
- *  "name+++++\0" -> "name\0"
- */
-void valid_name(char* name){
-    for(int i = 0; i < FILE_NAME_SIZE; i++){
-        if(name[i] == EMPTY_SYMBOL){
-            name[i] = '\0';
-            break;
-        }
-    }
-}
-
-/*
- *  "name\0" -> "name+++++\0"
- */
-void stored_name(char* name){
-    int s = 0;
-    for(int i = 0; i < FILE_NAME_SIZE; i++){
-        if(name[i] == '\0'){
-            s = i;
-            break;
-        }
-    }
-    for(int i = s; i < FILE_NAME_SIZE; i++){
-        name[i] = EMPTY_SYMBOL;
-    }
-}
 
 /**
  * Первичная запись в блок пустой папки
@@ -70,7 +41,8 @@ void filling_new_directory(int block){
  * @param file_count ссылка int*, в которой будет размер массива
  * @param block номер блока
  */
-void read_directory(struct directory_element directory[MAX_FILE_IN_DIRECTORY], int* file_count, int block){
+void read_directory(struct directory_element directory[MAX_FILE_IN_DIRECTORY],
+                    int* file_count, int block){
     char buf[BLOCK_SIZE];
     get_sector(buf, block);
 
@@ -104,17 +76,20 @@ void read_directory(struct directory_element directory[MAX_FILE_IN_DIRECTORY], i
     }
 }
 
+
 /**
  * Запись папки в блок
  * @param directory directory массив directory_element длиной file_count
  * @param file_count размер массива
  * @param block номер блока
  */
-void write_directory(struct directory_element directory[MAX_FILE_IN_DIRECTORY], int file_count, int block){
+void write_directory(struct directory_element directory[MAX_FILE_IN_DIRECTORY],
+                     int file_count, int block){
     char buf[BLOCK_SIZE];
     for(int i = 0; i < BLOCK_SIZE; i++){
         buf[i] = EMPTY_SYMBOL;
     }
+
 
     int s = 0;
 
@@ -143,38 +118,35 @@ void write_directory(struct directory_element directory[MAX_FILE_IN_DIRECTORY], 
         buf[s++] = ';';
     }
 
-    buf[s - 1] = '|';
+    if(file_count == 0){
+        buf[s] = '|';
+    }
+    else {
+        buf[s - 1] = '|';
+    }
     buf[BLOCK_SIZE - 1] = '\0';
     set_sector(buf, block);
 }
 
-void print_directory(struct directory_element directory[MAX_FILE_IN_DIRECTORY], int len){
+
+void print_dir_by_structure(struct directory_element *directory, int len){
     for(int i = 0; i < len; i++){
         printf("%d -> ", i);
         printf("inodeID:%d name:%s \n", directory[i].inodeID, directory[i].name);
     }
 }
 
-void delete_inode_in_directory(struct directory_element* directory, int file_count, int inodeID){
-    int index = -1;
-    for(int i = 0; i < file_count; i++){
-        if(directory[i].inodeID == inodeID){
-            index = i;
-            break;
-        }
-    }
-    if(index == -1){
-        fprintf(stderr, "This file was not found in the directory\n");
-        return;
-    }
-    for(int i = index + 1; i < file_count; i++){
-        directory[i - 1].inodeID = directory[i].inodeID;
-        strcpy(directory[i - 1].name, directory[i].name);
-    }
+void print_dir_by_inode(int inode_ID){
+    int dir_block = get_block(inode_ID);
+
+    struct directory_element directory[MAX_FILE_IN_DIRECTORY];
+    int* file_count = malloc(sizeof(int));
+    read_directory(directory, file_count, dir_block);
+
+    print_dir_by_structure(directory, *file_count);
 }
 
-int get_block(int inodeID){
-    return inode_table[inodeID].iblock[0];
-}
+
+
 
 #endif //FILESYSTEM_DIRECTORY_H

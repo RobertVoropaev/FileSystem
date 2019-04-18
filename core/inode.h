@@ -5,16 +5,23 @@
 #ifndef FILESYSTEM_INODE_H
 #define FILESYSTEM_INODE_H
 
-#include "settings.h"
+
+#include "../settings.h"
 #include "sectors.h"
 
+
+/**
+ * type: e - empty, f - file, d - directory
+ */
 struct inode {
-    char type; // e - free, f - file, d - directory
-    int len_iblock_arr; // ex. 0003
-    int iblock[IBLOCK_ARRAY_SIZE]; // ex. 0003 0023 0012
+    char type;
+    int len_iblock;
+    int iblock[IBLOCK_ARRAY_SIZE];
 };
 
+
 struct inode inode_table[INODE_TABLE_SIZE];
+
 
 /**
  *  Первичное заполнение блоков inode таблицы
@@ -77,7 +84,7 @@ void read_inode_table(){
             num2 = buf[j++] - '0';
             num3 = buf[j++] - '0';
             num4 = buf[j++] - '0';
-            inode_table[t].len_iblock_arr = 1000 * num1 + 100 * num2 + 10 * num3 + num4;
+            inode_table[t].len_iblock = 1000 * num1 + 100 * num2 + 10 * num3 + num4;
             j += 1;
 
             for (int s = 0; s < IBLOCK_ARRAY_SIZE; s++) {
@@ -108,7 +115,7 @@ void write_inode_table(){
             buf[j++] = ';';
 
 
-            int num = inode_table[t].len_iblock_arr;
+            int num = inode_table[t].len_iblock;
             int num1 = num / 1000;
             int num2 = num / 100 % 10;
             int num3 = num / 10 % 10;
@@ -140,7 +147,7 @@ void write_inode_table(){
 
 void print_inode_table(){
     for(int i = 0; i < INODE_TABLE_SIZE; i++){
-        printf("%c;%d;", inode_table[i].type, inode_table[i].len_iblock_arr);
+        printf("%c;%d;", inode_table[i].type, inode_table[i].len_iblock);
         for(int j = 0; j < IBLOCK_ARRAY_SIZE; j++){
             printf("%d:", inode_table[i].iblock[j]);
         }
@@ -148,6 +155,27 @@ void print_inode_table(){
     }
 }
 
+
+/**
+ * Получение первого блока файла по inode
+ * @param inodeID inode файла
+ * @return первый блок
+ */
+int get_block(int inodeID){
+    return inode_table[inodeID].iblock[0];
+}
+
+
+/**
+ * @return первый свободный inode, -1 - если свободных нет
+ */
+int get_free_inode(){
+    for(int i = 0; i < INODE_TABLE_SIZE; i++){
+        if(inode_table[i].type == 'e'){
+            return i;
+        }
+    }
+}
 
 
 #endif //FILESYSTEM_INODE_H
