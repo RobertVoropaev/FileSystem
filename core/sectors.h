@@ -91,6 +91,10 @@ void set_sector(const char* str, int sector_num){
     fclose(file);
 }
 
+/**
+ * Затирает сектор пустыми символами
+ * @param sector_num
+ */
 void clear_sector(int sector_num){
     char buf[BLOCK_SIZE];
     for(int i = 0; i < BLOCK_SIZE; i++){

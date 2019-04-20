@@ -10,6 +10,7 @@
 #include "../core/inode.h"
 #include "../core/directory.h"
 
+
 /**
  * Устанавливает блок статуса системы на уже создана
  */
@@ -23,6 +24,7 @@ void set_fs_creation_status(){
     set_sector(buf, STATUS_BLOCK);
 }
 
+
 /**
  * Загружает блок статуса системы
  * @return 1 - создана, 0 - нет
@@ -32,6 +34,7 @@ int get_fs_creation_status(){
     get_sector(buf, STATUS_BLOCK);
     return buf[0] - '0';
 }
+
 
 /**
  * Заполняет главный файл и блоки inode таблицы и bitmap и создает root каталог
@@ -57,6 +60,7 @@ void init_file_system(){
     set_fs_creation_status();
 }
 
+
 /**
  * Загрузка в пармять всех нужных структур.
  * Должна запускать пере каждой работы ФС.
@@ -65,8 +69,6 @@ void load_file_system_structure(){
     read_bitmap();
     read_inode_table();
 }
-
-
 
 
 #endif //FILESYSTEM_INITIAL_H

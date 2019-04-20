@@ -136,6 +136,7 @@ void print_dir_by_structure(struct directory_element *directory, int len){
     }
 }
 
+
 void print_dir_by_inode(int inode_ID){
     int dir_block = get_block(inode_ID);
 
@@ -145,8 +146,6 @@ void print_dir_by_inode(int inode_ID){
 
     print_dir_by_structure(directory, *file_count);
 }
-
-
 
 
 #endif //FILESYSTEM_DIRECTORY_H

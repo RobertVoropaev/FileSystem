@@ -15,7 +15,7 @@
 
 
 /**
- * Добавляет файл/папку в директорию
+ * Добавляет файл/папку в структуру директории блока
  * @param dir_inode inode папки
  * @param name имя файла с \0
  * @param type тип файла/папки
@@ -79,7 +79,7 @@ int create_file_or_dir_in_directory(int dir_inode,
 
 
 /**
- * Удаляет файл/папку из директории
+ * Удаляет файл/папку из структуры директории блока
  * @param dir_inode папки
  * @param name имя файла \0
  */
@@ -127,8 +127,6 @@ int delete_file_or_dir_in_directory(int dir_inode,
     write_inode_table();
     write_directory(directory, *file_count - 1, dir_block);
 }
-
-
 
 
 #endif //FILESYSTEM_COMMAND_H
