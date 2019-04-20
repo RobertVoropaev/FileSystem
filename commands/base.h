@@ -20,12 +20,12 @@
  * @param name имя файла с \0
  * @param type тип файла/папки
  */
-void create_file_in_directory(int dir_inode,
-                              const char name[FILE_NAME_SIZE],
-                              char type){
+int create_file_or_dir_in_directory(int dir_inode,
+                                     const char *name,
+                                     char type){
     if(inode_table[dir_inode].type != 'd'){
         fprintf(stderr, "It's not a directory\n");
-        return;
+        return -1;
     }
 
     char name_copy[FILE_NAME_SIZE];
@@ -34,7 +34,7 @@ void create_file_in_directory(int dir_inode,
 
     if(find_inode_in_directory(name_copy, dir_inode) != -1){
         fprintf(stderr, "This file has been created in the directory\n");
-        return;
+        return -1;
     }
 
     int dir_block = inode_table[dir_inode].iblock[0];
@@ -45,13 +45,13 @@ void create_file_in_directory(int dir_inode,
 
     if(*file_count == MAX_FILE_IN_DIRECTORY){
         fprintf(stderr, "Max file in the directory\n");
-        return;
+        return -1;
     }
 
     int new_inode = get_free_inode();
     if(new_inode == -1){
         fprintf(stderr, "No free inode yet\n");
-        return;
+        return -1;
     }
 
     int new_block = get_free_block();
@@ -83,11 +83,11 @@ void create_file_in_directory(int dir_inode,
  * @param dir_inode папки
  * @param name имя файла \0
  */
-void delete_file_in_directory(int dir_inode,
-                              const char name[FILE_NAME_SIZE]){
+int delete_file_or_dir_in_directory(int dir_inode,
+                                     const char *name){
     if(inode_table[dir_inode].type != 'd'){
         fprintf(stderr, "It's not a directory\n");
-        return;
+        return -1;
     }
 
     char name_copy[FILE_NAME_SIZE];
@@ -97,7 +97,7 @@ void delete_file_in_directory(int dir_inode,
     int file_inode = find_inode_in_directory(name_copy, dir_inode);
     if(file_inode == -1){
         fprintf(stderr, "This file was not found in the directory\n");
-        return;
+        return -1;
     }
     int file_block = inode_table[file_inode].iblock[0];
 
@@ -107,7 +107,7 @@ void delete_file_in_directory(int dir_inode,
         read_directory(directory, file_count, file_block);
         if(*file_count != 0){
             fprintf(stderr, "This directory is not empty\n");
-            return;
+            return -1;
         }
     }
 

@@ -53,7 +53,11 @@ void get_command_and_path(const char full_command[FULL_COMMAND_SIZE],
                           char path[MAX_PATH_LEN]){
     int s = 0;
     int is_command = 1;
-    for(int i = 0; i < strlen(full_command); i++){
+    for(int i = 0; i <= strlen(full_command); i++){
+        if(i == strlen(full_command)){
+            path[i - s] = '\0';
+            break;
+        }
         char c = full_command[i];
         if(c == ' '){
             s = i + 1;
@@ -86,6 +90,7 @@ int get_dir_and_name_in_path(const char path[MAX_PATH_LEN],
         return -1;
     }
     dir[0] = '\0';
+    name[0] = '\0';
 
     int i_path = 1;
     int i_dir = 0;
@@ -116,8 +121,13 @@ int get_dir_and_name_in_path(const char path[MAX_PATH_LEN],
                 name[i - def] = cur_name[i];
                 i_name += i_cur;
             }
-            name[i_cur] = '\0';
-            dir[i_dir - 1] = '\0';
+            name[i_cur - def] = '\0';
+            if(is_first) {
+                dir[i_dir] = '\0';
+            }
+            else{
+                dir[i_dir - 1] = '\0';
+            }
             break;
         }
         else {

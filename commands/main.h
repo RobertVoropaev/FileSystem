@@ -18,7 +18,9 @@ int create_directory(const char path[MAX_PATH_LEN]){
     }
 
     int inodeDir = find_inode_directory(dir);
-    create_file_in_directory(inodeDir, name, 'd');
+    if(create_file_or_dir_in_directory(inodeDir, name, 'd') == -1){
+        return -1;
+    }
     return 0;
 }
 
@@ -31,7 +33,9 @@ int delete_directory(const char path[MAX_PATH_LEN]){
     }
 
     int inodeDir = find_inode_directory(dir);
-    delete_file_in_directory(inodeDir, name);
+    if(delete_file_or_dir_in_directory(inodeDir, name) == -1){
+        return -1;
+    }
     return 0;
 }
 
@@ -44,7 +48,9 @@ int create_file(const char path[MAX_PATH_LEN]){
     }
 
     int inodeDir = find_inode_directory(dir);
-    create_file_in_directory(inodeDir, name, 'f');
+    if(create_file_or_dir_in_directory(inodeDir, name, 'f') == -1){
+        return -1;
+    }
     return 0;
 }
 
@@ -57,18 +63,21 @@ int delete_file(const char path[MAX_PATH_LEN]){
     }
 
     int inodeDir = find_inode_directory(dir);
-    delete_file_in_directory(inodeDir, name);
+    if(delete_file_or_dir_in_directory(inodeDir, name) == -1){
+        return -1;
+    }
     return 0;
 }
 
 int print_directory(const char path[MAX_PATH_LEN]){
     int inodeDir = find_inode_directory(path);
-    int blockDir = get_block(inodeDir);
-
     if(inodeDir == -1){
         fprintf(stderr, "Incorrect path\n");
         return -1;
     }
+
+    int blockDir = get_block(inodeDir);
+
 
     struct directory_element directory[MAX_FILE_IN_DIRECTORY];
     int* file_count = malloc(sizeof(int));

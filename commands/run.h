@@ -50,7 +50,7 @@ void run() {
             printf("File system created!\n");
         }
         else if(!strcmp(full_command, EXIT)){
-            printf("exit\n");
+            printf("Exit\n");
             break;
         }
         else if(!strcmp(full_command, HELP)){
