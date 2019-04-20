@@ -9,7 +9,11 @@
 #include "str_proc.h"
 #include "base.h"
 
-int create_directory(const char path[MAX_PATH_LEN]){
+int create_directory(char path[MAX_PATH_LEN]){
+    if(path[0] != '/' && path[0] != '\0'){
+        added_slash(path);
+    }
+
     char dir[MAX_PATH_LEN];
     char name[FILE_NAME_SIZE];
     if(get_dir_and_name_in_path(path, dir, name) == -1){
@@ -24,7 +28,11 @@ int create_directory(const char path[MAX_PATH_LEN]){
     return 0;
 }
 
-int delete_directory(const char path[MAX_PATH_LEN]){
+int delete_directory(char path[MAX_PATH_LEN]){
+    if(path[0] != '/' && path[0] != '\0'){
+        added_slash(path);
+    }
+
     char dir[MAX_PATH_LEN];
     char name[FILE_NAME_SIZE];
     if(get_dir_and_name_in_path(path, dir, name) == -1){
@@ -39,7 +47,11 @@ int delete_directory(const char path[MAX_PATH_LEN]){
     return 0;
 }
 
-int create_file(const char path[MAX_PATH_LEN]){
+int create_file(char path[MAX_PATH_LEN]){
+    if(path[0] != '/' && path[0] != '\0'){
+        added_slash(path);
+    }
+
     char dir[MAX_PATH_LEN];
     char name[FILE_NAME_SIZE];
     if(get_dir_and_name_in_path(path, dir, name) == -1){
@@ -54,7 +66,11 @@ int create_file(const char path[MAX_PATH_LEN]){
     return 0;
 }
 
-int delete_file(const char path[MAX_PATH_LEN]){
+int delete_file(char path[MAX_PATH_LEN]){
+    if(path[0] != '/' && path[0] != '\0'){
+        added_slash(path);
+    }
+
     char dir[MAX_PATH_LEN];
     char name[FILE_NAME_SIZE];
     if(get_dir_and_name_in_path(path, dir, name) == -1){
@@ -69,7 +85,11 @@ int delete_file(const char path[MAX_PATH_LEN]){
     return 0;
 }
 
-int print_directory(const char path[MAX_PATH_LEN]){
+int print_directory(char path[MAX_PATH_LEN]){
+    if(path[0] != '/' && path[0] != '\0'){
+        added_slash(path);
+    }
+
     int inodeDir = find_inode_directory(path);
     if(inodeDir == -1){
         fprintf(stderr, "Incorrect path\n");
@@ -77,7 +97,6 @@ int print_directory(const char path[MAX_PATH_LEN]){
     }
 
     int blockDir = get_block(inodeDir);
-
 
     struct directory_element directory[MAX_FILE_IN_DIRECTORY];
     int* file_count = malloc(sizeof(int));
@@ -96,8 +115,12 @@ int print_directory(const char path[MAX_PATH_LEN]){
     return 0;
 }
 
-int write_file(const char path[MAX_PATH_LEN],
+int write_file(char path[MAX_PATH_LEN],
                char str[BLOCK_SIZE]){
+    if(path[0] != '/' && path[0] != '\0'){
+        added_slash(path);
+    }
+
     char dir[MAX_PATH_LEN];
     char name[FILE_NAME_SIZE];
     if(get_dir_and_name_in_path(path, dir, name) == -1){
@@ -130,7 +153,11 @@ int write_file(const char path[MAX_PATH_LEN],
     return 0;
 }
 
-int read_file(const char path[MAX_PATH_LEN]){
+int read_file(char path[MAX_PATH_LEN]){
+    if(path[0] != '/' && path[0] != '\0'){
+        added_slash(path);
+    }
+
     char dir[MAX_PATH_LEN];
     char name[FILE_NAME_SIZE];
     if(get_dir_and_name_in_path(path, dir, name) == -1){

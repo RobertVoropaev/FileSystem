@@ -13,7 +13,9 @@
  * Функция, циклично обрабатывающая команды пользователя
  */
 void run() {
-    if(FILE_SYSTEM_IS_CREATED){
+    if(get_fs_creation_status() == 1){
+        printf("File system is ready!\n"
+                       "Enter command:\n");
         load_file_system_structure();
     }
 
@@ -30,7 +32,7 @@ void run() {
             }
         }
         if(!strcmp(full_command, INIT)){
-            if(FILE_SYSTEM_IS_CREATED){
+            if(get_fs_creation_status() == 1){
                 printf("File system has already been created.\n"
                                "Want to re-create? (All data will be lost) [yes/no]:\n");
                 char answer[4];
@@ -51,7 +53,6 @@ void run() {
             printf("File system created!\n");
         }
         else if(!strcmp(full_command, EXIT)){
-            printf("Exit\n");
             break;
         }
         else if(!strcmp(full_command, HELP)){
@@ -64,7 +65,6 @@ void run() {
             printf("%s <path>\n", LS);
         }
         else if(!strcmp(full_command, LS)){
-            printf("Processing...\n");
             print_directory("\0");
         }
         else {

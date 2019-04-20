@@ -53,7 +53,7 @@ void get_command_and_path(const char full_command[FULL_COMMAND_SIZE],
                           char path[MAX_PATH_LEN]){
     int s = 0;
     int is_command = 1;
-    for(int i = 0; i <= strlen(full_command); i++){
+     for(int i = 0; i <= strlen(full_command); i++){
         if(i == strlen(full_command)){
             path[i - s] = '\0';
             break;
@@ -135,6 +135,18 @@ int get_dir_and_name_in_path(const char path[MAX_PATH_LEN],
         }
     }
     return 0;
+}
+
+/**
+ * Добавляет / в начало переданной строки
+ * @param str
+ */
+void added_slash(char str[MAX_PATH_LEN]){
+    for(int i = strlen(str) + 1; i >= 1; i--){
+        str[i] = str[i - 1];
+    }
+    str[strlen(str) + 1] = '\0';
+    str[0] = '/';
 }
 
 #endif //FILESYSTEM_STRING_PROC_H

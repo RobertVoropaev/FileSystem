@@ -7,13 +7,25 @@
 
 //Главный файл системы
 #define MAIN_FILE "/home/rv/Документы/FileSystem/filesystem.txt"
-int FILE_SYSTEM_IS_CREATED = 0;
+
+//Команды
+#define INIT "init"
+#define EXIT "exit"
+#define MKDIR "mkdir"
+#define TOUCH "touch"
+#define RMDIR "rmdir"
+#define RM "rm"
+#define LS "ls"
+#define HELP "help"
+#define CAT "cat"
+#define ECHO "echo"
 
 //Настроки блоков
 const int BLOCK_SIZE = 2048; //Размер одного блока в байтах
 const int BLOCK_COUNT = 1024; //Количество блоков
 const int FILE_SYSTEM_SIZE = BLOCK_SIZE * BLOCK_COUNT; //Общий размер файловой системы
 const char EMPTY_SYMBOL = '+'; //Символ, которые записывается в неиспользуемые ячейки файла
+const int STATUS_BLOCK = BLOCK_COUNT - 1;
 
 //Настройки INODE
 const int INODE_TABLE_START_BLOCK = 1; //Блок, с которого начинаются INODE
@@ -33,18 +45,6 @@ const int FILE_NAME_SIZE = DIRECTORY_ELEMENT_SIZE - 4 - 2; //Размер име
 const int MAX_FILE_IN_DIRECTORY = BLOCK_SIZE / DIRECTORY_ELEMENT_SIZE; // Максимальное количество файлов в папке
 const int ROOT_DIRECTORY_BLOCK = INODE_TABLE_START_BLOCK + INODE_TABLE_BLOCK_COUNT;
 const int ROOT_INODE_ID = 0;
-
-//Команды
-#define INIT "init"
-#define EXIT "exit"
-#define MKDIR "mkdir"
-#define TOUCH "touch"
-#define RMDIR "rmdir"
-#define RM "rm"
-#define LS "ls"
-#define HELP "help"
-#define CAT "cat"
-#define ECHO "echo"
 
 //Настрока команд
 const int MAX_PATH_LEN = 64;

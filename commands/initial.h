@@ -11,6 +11,29 @@
 #include "../core/directory.h"
 
 /**
+ * Устанавливает блок статуса системы на уже создана
+ */
+void set_fs_creation_status(){
+    char buf[BLOCK_SIZE];;
+    buf[0] = '1';
+    for(int i = 1; i < BLOCK_SIZE - 1; i++){
+        buf[i] = EMPTY_SYMBOL;
+    }
+    buf[BLOCK_SIZE - 1] = '\0';
+    set_sector(buf, STATUS_BLOCK);
+}
+
+/**
+ * Загружает блок статуса системы
+ * @return 1 - создана, 0 - нет
+ */
+int get_fs_creation_status(){
+    char buf[BLOCK_SIZE];
+    get_sector(buf, STATUS_BLOCK);
+    return buf[0] - '0';
+}
+
+/**
  * Заполняет главный файл и блоки inode таблицы и bitmap и создает root каталог
  * при первом запуске системы.
  */
@@ -27,7 +50,11 @@ void init_file_system(){
     inode_table[ROOT_INODE_ID].iblock[0] = ROOT_DIRECTORY_BLOCK;
     write_inode_table();
 
-    FILE_SYSTEM_IS_CREATED = 1;
+    read_bitmap();
+    bitmap[STATUS_BLOCK] = 1;
+    write_bitmap();
+
+    set_fs_creation_status();
 }
 
 /**
@@ -38,6 +65,8 @@ void load_file_system_structure(){
     read_bitmap();
     read_inode_table();
 }
+
+
 
 
 #endif //FILESYSTEM_INITIAL_H
