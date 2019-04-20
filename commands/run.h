@@ -45,6 +45,7 @@ void run() {
                     continue;
                 }
             }
+            printf("Processing...\n");
             init_file_system();
             load_file_system_structure();
             printf("File system created!\n");
@@ -63,6 +64,7 @@ void run() {
             printf("%s <path>\n", LS);
         }
         else if(!strcmp(full_command, LS)){
+            printf("Processing...\n");
             print_directory("\0");
         }
         else {
@@ -72,6 +74,7 @@ void run() {
             path[0] = '\0';
             get_command_and_path(full_command, command, path);
             if(!strcmp(command, MKDIR)){
+                printf("Processing...\n");
                 if(create_directory(path) != 0){
                     printf("Error\n");
                 }
@@ -80,6 +83,7 @@ void run() {
                 }
             }
             else if(!strcmp(command, RMDIR)){
+                printf("Processing...\n");
                 if(delete_directory(path) != 0){
                     printf("Error\n");
                 }
@@ -88,6 +92,7 @@ void run() {
                 }
             }
             else if(!strcmp(command, TOUCH)){
+                printf("Processing...\n");
                 if(create_file(path) != 0){
                     printf("Error\n");
                 }
@@ -96,6 +101,7 @@ void run() {
                 };
             }
             else if(!strcmp(command, RM)){
+                printf("Processing...\n");
                 if(delete_file(path) != 0){
                     printf("Error\n");
                 }
@@ -106,6 +112,27 @@ void run() {
             else if(!strcmp(command, LS)){
                 if(print_directory(path) != 0){
                     printf("Error\n");
+                }
+            }
+            else if(!strcmp(command, CAT)){
+                if(read_file(path) != 0){
+                    printf("Error\n");
+                }
+            }
+            else if(!strcmp(command, ECHO)){
+                printf("Enter text:\n");
+                char buf[BLOCK_SIZE];
+                fgets(buf, BLOCK_SIZE, stdin);
+                for(int i = 0; i < FULL_COMMAND_SIZE; i++){
+                    if(full_command[i] == '\n'){
+                        full_command[i] = '\0';
+                        break;
+                    }
+                }
+                if(write_file(path, buf) != 0){
+                    printf("Error\n");
+                } else {
+                    printf("Text saved\n");
                 }
             }
             else{

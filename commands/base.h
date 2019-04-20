@@ -121,6 +121,7 @@ int delete_file_or_dir_in_directory(int dir_inode,
     inode_table[file_inode].type = 'e';
     inode_table[file_inode].len_iblock = 0;
     bitmap[file_block] = 0;
+    clear_sector(file_block);
 
     write_bitmap();
     write_inode_table();

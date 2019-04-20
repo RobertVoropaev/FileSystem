@@ -91,5 +91,15 @@ void set_sector(const char* str, int sector_num){
     fclose(file);
 }
 
+void clear_sector(int sector_num){
+    char buf[BLOCK_SIZE];
+    for(int i = 0; i < BLOCK_SIZE; i++){
+        buf[i] = EMPTY_SYMBOL;
+    }
+    buf[BLOCK_SIZE - 1] = '\0';
+
+    set_sector(buf, sector_num);
+}
+
 
 #endif //FILESYSTEM_SECTORS_H

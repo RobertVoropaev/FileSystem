@@ -43,6 +43,8 @@ const int ROOT_INODE_ID = 0;
 #define RM "rm"
 #define LS "ls"
 #define HELP "help"
+#define CAT "cat"
+#define ECHO "echo"
 
 //Настрока команд
 const int MAX_PATH_LEN = 64;

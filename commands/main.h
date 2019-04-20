@@ -96,4 +96,65 @@ int print_directory(const char path[MAX_PATH_LEN]){
     return 0;
 }
 
+int write_file(const char path[MAX_PATH_LEN],
+               char str[BLOCK_SIZE]){
+    char dir[MAX_PATH_LEN];
+    char name[FILE_NAME_SIZE];
+    if(get_dir_and_name_in_path(path, dir, name) == -1){
+        fprintf(stderr, "Incorrect path\n");
+        return -1;
+    }
+
+    int dir_inode = find_inode_directory(dir);
+    int file_inode = find_inode_in_directory(name, dir_inode);
+    if(inode_table[file_inode].type != 'f'){
+        printf("It's not a file\n");
+        return -1;
+    }
+    int file_block = get_block(file_inode);
+
+    int s = 0;
+    for(int i = 0; i < BLOCK_SIZE; i++){
+        if(str[i] == '\0'){
+            s = i;
+            break;
+        }
+    }
+    for(int i = s; i < BLOCK_SIZE; i++){
+        str[i] = EMPTY_SYMBOL;
+    }
+    str[BLOCK_SIZE - 1] = '\0';
+
+
+    set_sector(str, file_block);
+    return 0;
+}
+
+int read_file(const char path[MAX_PATH_LEN]){
+    char dir[MAX_PATH_LEN];
+    char name[FILE_NAME_SIZE];
+    if(get_dir_and_name_in_path(path, dir, name) == -1){
+        fprintf(stderr, "Incorrect path\n");
+        return -1;
+    }
+
+    int dir_inode = find_inode_directory(dir);
+    int file_inode = find_inode_in_directory(name, dir_inode);
+    if(inode_table[file_inode].type != 'f'){
+        printf("It's not a file\n");
+        return -1;
+    }
+    int file_block = get_block(file_inode);
+
+    char buf[BLOCK_SIZE];
+    get_sector(buf, file_block);
+    for(int i = 0; i < BLOCK_SIZE; i++){
+        if(buf[i] == EMPTY_SYMBOL){
+            buf[i] = '\0';
+        }
+    }
+    printf("%s", buf);
+    return 0;
+}
+
 #endif //FILESYSTEM_СOMMAND_MAIN_H
