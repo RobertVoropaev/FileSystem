@@ -115,6 +115,41 @@ int print_directory(char path[MAX_PATH_LEN]){
     return 0;
 }
 
+char* get_ls_directory(char path[MAX_PATH_LEN]){
+    char* response = (char*) malloc(MAX_RESPONSE_LEN);
+
+    if(path[0] != '/' && path[0] != '\0'){
+        added_slash(path);
+    }
+
+    int inodeDir = find_inode_directory(path);
+    if(inodeDir == -1){
+        strcpy(response, "Incorrect path\n");
+        return response;
+    }
+
+    int blockDir = get_block(inodeDir);
+
+    struct directory_element directory[MAX_FILE_IN_DIRECTORY];
+    int* file_count = malloc(sizeof(int));
+    read_directory(directory, file_count, blockDir);
+
+    if(*file_count == 0){
+        strcpy(response, "Directory is empty\n");
+        return response;
+    }
+
+    response[0] = '\0';
+    for(int i = 0; i < *file_count; i++){
+        char buf[MAX_RESPONSE_LEN];
+        sprintf(buf, "%c %s\n\0",
+                inode_table[directory[i].inodeID].type,
+                directory[i].name);
+        strcat(response, buf);
+    }
+    return response;
+}
+
 int write_file(char path[MAX_PATH_LEN],
                char str[BLOCK_SIZE]){
     if(path[0] != '/' && path[0] != '\0'){

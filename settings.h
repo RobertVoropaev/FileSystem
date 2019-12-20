@@ -50,5 +50,6 @@ const int ROOT_INODE_ID = 0;
 const int MAX_PATH_LEN = 64;
 const int COMMAND_SIZE = 6;
 const int FULL_COMMAND_SIZE = MAX_PATH_LEN + COMMAND_SIZE ;
+const int MAX_RESPONSE_LEN = 256;
 
 #endif //FILESYSTEM_CONSTANTS_H

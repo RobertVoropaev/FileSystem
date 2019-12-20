@@ -13,10 +13,22 @@
  * Функция, циклично обрабатывающая команды пользователя
  */
 void run() {
+    char response[MAX_RESPONSE_LEN];
+
     if(get_fs_creation_status() == 1){
-        printf("File system is ready!\n"
-                       "Enter command:\n");
         load_file_system_structure();
+
+        strcpy(response, "File system is ready!\n"
+                "Enter command:\n");
+        printf(response);
+
+    }
+    else{
+        init_file_system();
+        load_file_system_structure();
+
+        strcpy(response, "File system created!\n");
+        printf(response);
     }
 
     char full_command[FULL_COMMAND_SIZE];
@@ -33,8 +45,10 @@ void run() {
         }
         if(!strcmp(full_command, INIT)){
             if(get_fs_creation_status() == 1){
-                printf("File system has already been created.\n"
-                               "Want to re-create? (All data will be lost) [yes/no]:\n");
+                strcpy(response, "File system has already been created.\n"
+                        "Want to re-create? (All data will be lost) [yes/no]:\n");
+                printf(response);
+
                 char answer[4];
                 fgets(answer, 4, stdin);
                 for(int i = 0; i < 4; i++){
@@ -47,80 +61,100 @@ void run() {
                     continue;
                 }
             }
-            printf("Processing...\n");
+            fprintf(stdin, "Processing...\n");
+
             init_file_system();
             load_file_system_structure();
-            printf("File system created!\n");
+
+            strcpy(response, "File system created!\n");
+            printf(response);
         }
         else if(!strcmp(full_command, EXIT)){
             break;
         }
         else if(!strcmp(full_command, HELP)){
-            printf("%s\n", INIT);
-            printf("%s\n", EXIT);
-            printf("%s <path>\n", MKDIR);
-            printf("%s <path>\n", RMDIR);
-            printf("%s <path>\n", TOUCH);
-            printf("%s <path>\n", RM);
-            printf("%s <path>\n", LS);
+            sprintf(response, "%s\n"
+                    "%s\n"
+                    "%s <path>\n"
+                    "%s <path>\n"
+                    "%s <path>\n"
+                    "%s <path>\n"
+                    "%s <path>\n",
+                    INIT, EXIT, MKDIR, RMDIR, TOUCH, RM, LS);
+            printf(response);
         }
         else if(!strcmp(full_command, LS)){
-            print_directory("\0");
+            strcpy(response, get_ls_directory("\0"));
+            printf(response);
         }
         else {
             char command[COMMAND_SIZE];
             char path[MAX_PATH_LEN];
+
             command[0] = '\0';
             path[0] = '\0';
+
             get_command_and_path(full_command, command, path);
             if(!strcmp(command, MKDIR)){
-                printf("Processing...\n");
+                fprintf(stdin, "Processing...\n");
                 if(create_directory(path) != 0){
-                    printf("Error\n");
+                    strcpy(response, "Error\n");
+                    printf(response);
                 }
                 else {
-                    printf("Directory created!\n");
+                    strcpy(response, "Directory created!\n");
+                    printf(response);
                 }
             }
             else if(!strcmp(command, RMDIR)){
-                printf("Processing...\n");
+                fprintf(stdin, "Processing...\n");
                 if(delete_directory(path) != 0){
-                    printf("Error\n");
+                    strcpy(response, "Error\n");
+                    printf(response);
                 }
                 else {
-                    printf("Directory deleted!\n");
+                    strcpy(response, "Directory deleted!\n");
+                    printf(response);
                 }
             }
             else if(!strcmp(command, TOUCH)){
-                printf("Processing...\n");
+                fprintf(stdin, "Processing...\n");
                 if(create_file(path) != 0){
-                    printf("Error\n");
+                    strcpy(response, "Error\n");
+                    printf(response);
                 }
                 else {
-                    printf("File created!\n");
+                    strcpy(response, "File created!\n");
+                    printf(response);
                 };
             }
             else if(!strcmp(command, RM)){
-                printf("Processing...\n");
+                fprintf(stdin, "Processing...\n");
                 if(delete_file(path) != 0){
-                    printf("Error\n");
+                    strcpy(response, "Error\n");
+                    printf(response);
                 }
                 else {
-                    printf("File deleted!\n");
+                    strcpy(response, "File deleted!\n");
+                    printf(response);
                 };
             }
             else if(!strcmp(command, LS)){
                 if(print_directory(path) != 0){
-                    printf("Error\n");
+                    strcpy(response, "Error\n");
+                    printf(response);
                 }
             }
             else if(!strcmp(command, CAT)){
                 if(read_file(path) != 0){
-                    printf("Error\n");
+                    strcpy(response, "Error\n");
+                    printf(response);
                 }
             }
             else if(!strcmp(command, ECHO)){
-                printf("Enter text:\n");
+                strcpy(response, "Enter text:\n");
+                printf(response);
+
                 char buf[BLOCK_SIZE];
                 fgets(buf, BLOCK_SIZE, stdin);
                 for(int i = 0; i < FULL_COMMAND_SIZE; i++){
@@ -130,13 +164,16 @@ void run() {
                     }
                 }
                 if(write_file(path, buf) != 0){
-                    printf("Error\n");
+                    strcpy(response, "Error\n");
+                    printf(response);
                 } else {
-                    printf("Text saved\n");
+                    strcpy(response, "Text saved\n");
+                    printf(response);
                 }
             }
             else{
-                fprintf(stderr, "Unknown command\n");
+                strcpy(response, "Unknown command\n");
+                printf(response);
             }
         }
     }
