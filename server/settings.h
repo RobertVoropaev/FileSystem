@@ -46,10 +46,14 @@ const int MAX_FILE_IN_DIRECTORY = BLOCK_SIZE / DIRECTORY_ELEMENT_SIZE; // Мак
 const int ROOT_DIRECTORY_BLOCK = INODE_TABLE_START_BLOCK + INODE_TABLE_BLOCK_COUNT;
 const int ROOT_INODE_ID = 0;
 
-//Настрока команд
+//Настроки команд
 const int MAX_PATH_LEN = 64;
 const int COMMAND_SIZE = 6;
 const int FULL_COMMAND_SIZE = MAX_PATH_LEN + COMMAND_SIZE ;
 const int MAX_RESPONSE_LEN = 256;
+const int MAX_REQUST_LEN = MAX_RESPONSE_LEN;
+
+//Настройки сервера
+const int PORT = 5000;
 
 #endif //FILESYSTEM_CONSTANTS_H
