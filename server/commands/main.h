@@ -124,7 +124,7 @@ char* get_ls_directory(char path[MAX_PATH_LEN]){
 
     int inodeDir = find_inode_directory(path);
     if(inodeDir == -1){
-        strcpy(response, "Incorrect path\n");
+        strcpy(response, "Incorrect path\0");
         return response;
     }
 
@@ -135,18 +135,20 @@ char* get_ls_directory(char path[MAX_PATH_LEN]){
     read_directory(directory, file_count, blockDir);
 
     if(*file_count == 0){
-        strcpy(response, "Directory is empty\n");
+        strcpy(response, "Directory is empty\0");
         return response;
     }
 
     response[0] = '\0';
     for(int i = 0; i < *file_count; i++){
         char buf[MAX_RESPONSE_LEN];
+
         sprintf(buf, "%c %s\n\0",
-                inode_table[directory[i].inodeID].type,
-                directory[i].name);
+                    inode_table[directory[i].inodeID].type,
+                    directory[i].name);
         strcat(response, buf);
     }
+    response[strlen(response) - 1] = '\0';
     return response;
 }
 
@@ -217,6 +219,39 @@ int read_file(char path[MAX_PATH_LEN]){
     }
     printf("%s", buf);
     return 0;
+}
+
+char* get_file(char path[MAX_PATH_LEN]){
+    if(path[0] != '/' && path[0] != '\0'){
+        added_slash(path);
+    }
+
+    char* response = (char*) malloc(MAX_RESPONSE_LEN);
+
+    char dir[MAX_PATH_LEN];
+    char name[FILE_NAME_SIZE];
+    if(get_dir_and_name_in_path(path, dir, name) == -1){
+        strcpy(response, "Incorrect path\0");
+        return response;
+    }
+
+    int dir_inode = find_inode_directory(dir);
+    int file_inode = find_inode_in_directory(name, dir_inode);
+    if(inode_table[file_inode].type != 'f'){
+        strcpy(response, "It's not a file\0");
+        return response;
+    }
+    int file_block = get_block(file_inode);
+
+    char buf[BLOCK_SIZE];
+    get_sector(buf, file_block);
+    for(int i = 0; i < BLOCK_SIZE; i++){
+        if(buf[i] == EMPTY_SYMBOL){
+            buf[i] = '\0';
+        }
+    }
+    strcpy(response, buf);
+    return response;
 }
 
 #endif //FILESYSTEM_СOMMAND_MAIN_H
